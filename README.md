@@ -12,9 +12,12 @@ simulere **rådighedsbeløbet** måned for måned.
   akkumuleret saldo (ud fra startsaldo). Klik på en kategori for at se de enkelte poster.
 - **Nøgletal** – gennemsnitligt rådighedsbeløb, måneder med underskud, laveste saldo og
   forslag til fast månedlig overførsel til en **budgetkonto** (udjævner ikke-månedlige udgifter).
+- **Pr. person** – poster med "Hvem" sat til en person er personlige; "Fælles" (eller tomt)
+  deles efter en fordelingsnøgle: efter indkomst, lige deling eller egne procenter. Viser hver
+  persons rådighedsbeløb, andel af fælles udgifter og fast månedlig overførsel til fælleskontoen.
 - **Grafer** – indtægter/udgifter, rådighedsbeløb og saldo pr. måned.
 - **Scenarier** – kopiér et budget (fx "Ny bil", "Barsel", "Nyt job"), ret i kopien og
-  sammenlign scenarierne side om side.
+  sammenlign scenarierne side om side, også pr. person.
 - **Import/eksport** – JSON (backup/deling) og CSV til Excel (semikolon, dansk format).
 
 Data gemmes kun lokalt i browseren (localStorage).
@@ -34,5 +37,6 @@ npm run build    # statisk build i dist/
 
 - `src/types.ts` – datamodel
 - `src/calc.ts` – al beregning (fordeling på måneder, summer, saldo)
+- `src/people.ts` – fordeling af fælles udgifter og rådighedsbeløb pr. person
 - `src/storage.ts` – lokal lagring, eksempeldata og validering af importerede data
 - `src/components/` – UI

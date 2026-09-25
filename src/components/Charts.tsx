@@ -38,9 +38,10 @@ function niceTicks(min: number, max: number, count = 5) {
   return ticks;
 }
 
-const shortKr = (v: number) => (Math.abs(v) >= 1000 ? `${fmt(v / 1000)}k` : fmt(v));
+const oneDecimal = new Intl.NumberFormat('da-DK', { maximumFractionDigits: 1 });
+const shortKr = (v: number) => (Math.abs(v) >= 1000 ? `${oneDecimal.format(v / 1000)}k` : fmt(v));
 
-function Chart({ title, series, kind }: { title: string; series: Series[]; kind: 'bar' | 'line' }) {
+export function Chart({ title, series, kind }: { title: string; series: Series[]; kind: 'bar' | 'line' }) {
   const [ref, width] = useWidth<HTMLDivElement>();
   const [hover, setHover] = useState<number | null>(null);
 
@@ -84,7 +85,7 @@ function Chart({ title, series, kind }: { title: string; series: Series[]; kind:
         ))}
         {MONTHS.map((m, i) => (
           <text key={m} x={xCenter(i)} y={H - 8} textAnchor="middle" className="tick">
-            {m}
+            {band < 36 ? m[0] : m}
           </text>
         ))}
 

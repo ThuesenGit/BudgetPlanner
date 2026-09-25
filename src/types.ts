@@ -32,6 +32,20 @@ export interface BudgetItem {
   enabled: boolean;
 }
 
+/**
+ * Hvordan fælles udgifter (minus fælles indtægter) fordeles mellem personerne:
+ * - equal:  ligeligt
+ * - income: i forhold til hver persons egne indtægter
+ * - custom: faste procentsatser pr. person
+ */
+export type SplitMethod = 'equal' | 'income' | 'custom';
+
+export interface Sharing {
+  method: SplitMethod;
+  /** Procent pr. person ved 'custom' (normaliseres, så summen altid er 100 %) */
+  customShares: Record<string, number>;
+}
+
 export interface Budget {
   id: string;
   name: string;
@@ -39,6 +53,7 @@ export interface Budget {
   /** Saldo ved årets start – bruges til den akkumulerede saldo */
   startBalance: number;
   items: BudgetItem[];
+  sharing: Sharing;
 }
 
 export interface AppState {

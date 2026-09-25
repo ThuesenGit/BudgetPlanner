@@ -1,4 +1,4 @@
-import type { AppState, Budget, BudgetItem } from './types';
+import type { AppState, Budget, BudgetItem, Sharing, SplitMethod } from './types';
 
 const KEY = 'budgetplanner.v1';
 
@@ -24,6 +24,8 @@ export function newItem(partial: Partial<BudgetItem> = {}): BudgetItem {
     ...partial,
   };
 }
+
+export const defaultSharing = (): Sharing => ({ method: 'income', customShares: {} });
 
 export function sampleBudget(year = new Date().getFullYear()): Budget {
   const i = (p: Partial<BudgetItem>) => newItem(p);
@@ -57,12 +59,28 @@ export function sampleBudget(year = new Date().getFullYear()): Budget {
         monthlyAmounts: [0, 0, 500, 0, 500, 0, 0, 0, 500, 0, 0, 5000],
       }),
       i({ name: 'Opsparing', category: 'Opsparing', amount: 3000 }),
+      i({ name: 'Fitness', category: 'Personligt', amount: 299, owner: 'Person 1' }),
+      i({ name: 'Tøj og personligt', category: 'Personligt', amount: 1500, owner: 'Person 1' }),
+      i({ name: 'Frokostordning', category: 'Personligt', amount: 450, owner: 'Person 2', frequency: 'custom', months: [0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 11] }),
+      i({ name: 'Tøj og personligt', category: 'Personligt', amount: 1500, owner: 'Person 2' }),
     ],
+    sharing: defaultSharing(),
   };
 }
 
 export function emptyBudget(year = new Date().getFullYear()): Budget {
-  return { id: uid(), name: `Budget ${year}`, year, startBalance: 0, items: [] };
+  return { id: uid(), name: `Budget ${year}`, year, startBalance: 0, items: [], sharing: defaultSharing() };
+}
+
+const METHODS: SplitMethod[] = ['equal', 'income', 'custom'];
+
+function normalizeSharing(raw: any): Sharing {
+  const method = METHODS.includes(raw?.method) ? raw.method : defaultSharing().method;
+  const customShares: Record<string, number> = {};
+  if (raw?.customShares && typeof raw.customShares === 'object') {
+    for (const [k, v] of Object.entries(raw.customShares)) customShares[k] = Math.max(0, Number(v) || 0);
+  }
+  return { method, customShares };
 }
 
 /** Udfylder manglende felter, så gamle/importerede data altid er gyldige. */
@@ -72,6 +90,7 @@ export function normalizeBudget(raw: any): Budget {
     name: String(raw?.name ?? 'Budget'),
     year: Number(raw?.year) || new Date().getFullYear(),
     startBalance: Number(raw?.startBalance) || 0,
+    sharing: normalizeSharing(raw?.sharing),
     items: Array.isArray(raw?.items)
       ? raw.items.map((it: any) => {
           const base = newItem(it);

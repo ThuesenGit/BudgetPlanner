@@ -7,13 +7,15 @@ import { ItemList } from './components/ItemList';
 import { YearOverview } from './components/YearOverview';
 import { Charts } from './components/Charts';
 import { Compare } from './components/Compare';
+import { People } from './components/People';
 import { downloadFile, overviewCsv } from './exporters';
 
-type Tab = 'items' | 'overview' | 'charts' | 'compare';
+type Tab = 'items' | 'overview' | 'people' | 'charts' | 'compare';
 
 const TABS: { id: Tab; label: string }[] = [
   { id: 'items', label: 'Poster' },
   { id: 'overview', label: 'Årsoversigt' },
+  { id: 'people', label: 'Pr. person' },
   { id: 'charts', label: 'Grafer' },
   { id: 'compare', label: 'Sammenlign scenarier' },
 ];
@@ -159,6 +161,7 @@ export default function App() {
       <main>
         {tab === 'items' && <ItemList items={budget.items} onChange={(items) => updateBudget({ items })} />}
         {tab === 'overview' && <YearOverview budget={budget} summary={summary} />}
+        {tab === 'people' && <People budget={budget} onSharingChange={(sharing) => updateBudget({ sharing })} />}
         {tab === 'charts' && <Charts summary={summary} />}
         {tab === 'compare' && <Compare budgets={state.budgets} activeId={budget.id} />}
       </main>

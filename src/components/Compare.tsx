@@ -1,11 +1,13 @@
 import { useMemo, useState } from 'react';
 import type { Budget } from '../types';
 import { fmt, fmtKr, MONTHS, summarize } from '../calc';
+import { summarizePeople } from '../people';
 
 export function Compare({ budgets, activeId }: { budgets: Budget[]; activeId: string }) {
   const [selected, setSelected] = useState<string[]>(() => budgets.slice(0, 4).map((b) => b.id));
   const chosen = budgets.filter((b) => selected.includes(b.id));
-  const summaries = useMemo(() => chosen.map((b) => ({ b, s: summarize(b) })), [chosen]);
+  const summaries = useMemo(() => chosen.map((b) => ({ b, s: summarize(b), p: summarizePeople(b) })), [chosen]);
+  const peopleNames = [...new Set(summaries.flatMap((x) => x.p.people.map((p) => p.name)))].sort((a, b) => a.localeCompare(b, 'da'));
   const base = summaries.find((x) => x.b.id === activeId) ?? summaries[0];
 
   if (budgets.length < 2) {
@@ -67,6 +69,42 @@ export function Compare({ budgets, activeId }: { budgets: Budget[]; activeId: st
           </tbody>
         </table>
       </div>
+
+      {peopleNames.length > 0 && (
+        <>
+          <h3>Rådighedsbeløb pr. person (snit pr. md.)</h3>
+          <div className="table-wrap">
+            <table className="overview">
+              <thead>
+                <tr>
+                  <th>Scenarie</th>
+                  {peopleNames.map((n) => (
+                    <th key={n} className="num">
+                      {n}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {summaries.map(({ b, p }) => (
+                  <tr key={b.id}>
+                    <th scope="row">{b.name}</th>
+                    {peopleNames.map((n) => {
+                      const person = p.people.find((x) => x.name === n);
+                      const avg = person ? person.totals.disposable / 12 : null;
+                      return (
+                        <td key={n} className={`num ${avg !== null && avg < 0 ? 'neg' : ''}`}>
+                          {avg === null ? '–' : fmtKr(avg)}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
 
       <h3>Rådighedsbeløb pr. måned</h3>
       <div className="table-wrap">

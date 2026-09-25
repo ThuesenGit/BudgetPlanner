@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { itemMonthly, paymentMonths, summarize } from './calc';
-import { newItem, normalizeBudget, sampleBudget } from './storage';
+import { defaultSharing, newItem, normalizeBudget, sampleBudget } from './storage';
 import type { Budget } from './types';
 
 describe('paymentMonths', () => {
@@ -31,6 +31,7 @@ describe('summarize', () => {
     name: 'Test',
     year: 2026,
     startBalance: 1000,
+    sharing: defaultSharing(),
     items: [
       newItem({ type: 'income', category: 'Løn', amount: 30000 }),
       newItem({ category: 'Bolig', amount: 10000 }),
