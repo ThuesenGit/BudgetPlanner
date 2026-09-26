@@ -31,7 +31,14 @@ npm test         # tests af beregningerne
 npm run build    # statisk build i dist/
 ```
 
-`dist/` er rene statiske filer og kan hostes hvor som helst (fx GitHub Pages).
+`dist/` er rene statiske filer og kan hostes hvor som helst.
+
+## Online-version (GitHub Pages)
+
+Workflowet `.github/workflows/deploy.yml` tester, bygger og udgiver appen automatisk,
+hver gang `main` opdateres. Første gang skal GitHub Pages slås til under
+**Settings → Pages → Source: GitHub Actions**. Appen ligger derefter på
+https://thuesengit.github.io/BudgetPlanner/
 
 ## Struktur
 
